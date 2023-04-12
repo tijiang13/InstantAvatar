@@ -1,5 +1,5 @@
 # InstantAvatar
-[Project Page](https://tijiang13.github.io/InstantAvatar/)
+[[Project Page]](https://tijiang13.github.io/InstantAvatar/)
 
 ## Prepare Data
 ```bash
@@ -38,7 +38,7 @@ bash ./bash/run-demo.sh
 Evaluate the results on 4 sequences of peoplesnapshot with optimized poses (`male-3-casual`, `male-4-casual`, `female-3-casual`, `female-4-casual`)
 
 ```bash
-bash ./bash/run-peoplesnapshot.sh # training on sequences with optimized poses
+bash ./bash/run-peoplesnapshot.sh
 ```
 
 We also support fitting SMPL poses on the fly, when the provided SMPL registration is not perfect (however it will converge slower, ~10 mins on a 3090 card)
