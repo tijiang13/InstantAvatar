@@ -1,0 +1,31 @@
+_target_: instant_avatar.datasets.peoplesnapshot.PeopleSnapshotDataModule
+name: peoplesnapshot
+subject: male-4-casual
+gender: male
+opt:
+  dataroot: ./data/PeopleSnapshot/${dataset.subject}/
+  subject: ${dataset.subject}
+  train:
+    num_workers: 8
+    batch_size: 4
+    start: 0
+    end: 659
+    skip: 6
+    downscale: 2
+    sampler: ${sampler}
+    fitting: ${model.opt.optimize_SMPL.enable}
+    refine: ${model.opt.optimize_SMPL.is_refine}
+  val:
+    num_workers: 4
+    batch_size: 1
+    start: 660
+    end: 660
+    skip: 6
+    downscale: 2
+  test:
+    num_workers: 4
+    batch_size: 1
+    start: 660
+    end: 872
+    skip: 6
+    downscale: 2

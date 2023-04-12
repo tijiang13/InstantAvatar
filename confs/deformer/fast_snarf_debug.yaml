@@ -1,0 +1,9 @@
+_target_: instant_avatar.deformers.snarf_deformer.SNARFDeformer
+model_path: ./data/SMPLX/smpl
+gender: ${dataset.gender}
+opt:
+    softmax_mode: hierarchical
+    resolution: 128
+    cano_pose: "A_pose"
+    precision: ${train.precision}
+    version: 2

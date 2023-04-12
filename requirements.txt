@@ -1,0 +1,5 @@
+torch==1.10.0
+pytorch-lightning==1.5.7
+hydra-core==1.1.2
+opencv-python
+git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch

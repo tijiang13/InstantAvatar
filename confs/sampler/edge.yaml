@@ -1,0 +1,5 @@
+_target_: instant_avatar.utils.sampler.EdgeSampler
+num_sample: 4096
+ratio_mask: 0.6
+ratio_edge: 0.3
+kernel_size: 16

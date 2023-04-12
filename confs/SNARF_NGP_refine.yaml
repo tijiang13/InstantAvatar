@@ -1,0 +1,46 @@
+defaults:
+  - dataset: peoplesnapshot/male-3-casual
+  - deformer: fast_snarf
+  - network: ngp
+  - renderer: raymarcher_acc
+  - sampler: edge
+  - _self_
+
+hydra:
+  run:
+    dir: "outputs/${dataset.name}/${experiment}/${dataset.subject}"
+
+model:
+  _target_: instant_avatar.models.DNeRF.DNeRFModel
+  opt:
+    network: ${network}
+    deformer: ${deformer}
+    renderer: ${renderer}
+    optimize_SMPL:
+      enable: true
+      is_refine: true
+      lr: 1e-5
+    loss:
+      _target_: instant_avatar.utils.loss.NGPLoss
+      opt:
+        w_rgb: 1.0
+        w_alpha: 0.1
+        w_reg: 0.1
+    optimizer:
+      lr: 1e-2
+      betas: [0.9, 0.99]
+      eps: 1e-15
+    scheduler:
+      max_epochs: ${train.max_epochs}
+
+project: "SNARF_NGP"
+experiment: "baseline"
+seed: 42
+resume: true
+train:
+  precision: 32
+  max_epochs: 20
+  check_val_every_n_epoch: 10
+checkpoint:
+  save_top_k: 1
+  every_n_epochs: 1

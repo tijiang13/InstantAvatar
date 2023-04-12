@@ -1,0 +1,3 @@
+_target_: instant_avatar.deformers.smpl_deformer.SMPLDeformer
+model_path: ./data/SMPLX/smpl
+gender: ${dataset.gender}

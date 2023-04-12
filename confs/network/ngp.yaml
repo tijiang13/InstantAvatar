@@ -1,0 +1,6 @@
+_target_: instant_avatar.models.networks.ngp.NeRFNGPNet
+opt:
+  use_viewdir: False
+  cond_dim: 0
+  center: [0, -0.3, 0]
+  scale: [2.5, 2.5, 2.5]
