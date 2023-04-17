@@ -28,9 +28,9 @@ Here we use the in the wild video provided by [Neuman](https://github.com/apple/
 1. create a yaml file specifying the details about the sequence in `./confs/dataset/`. In this example it's provided in `./confs/dataset/neuman/seattle.yaml`.
 2. download the data from [Neuman's Repo](https://github.com/apple/ml-neuman), and run `cp <path-to-neuman-dataset>/seattle/images ./data/custom/seattle/`
 3. run the bash script `bash scripts/custom/process-sequence.sh ./data/custom/seattle neutral` to preprocess the images, which
-  1. uses [Openpose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) to estimate the 2D keypoints,
-  2. uses [Segment-Anything](https://github.com/facebookresearch/segment-anything) to segment the scene
-  3. uses [ROMP](https://github.com/Arthur151/ROMP) to estimate camera and smpl parameters
+    - uses [Openpose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) to estimate the 2D keypoints,
+    - uses [Segment-Anything](https://github.com/facebookresearch/segment-anything) to segment the scene
+    - uses [ROMP](https://github.com/Arthur151/ROMP) to estimate camera and smpl parameters
 4. run the bash script `bash ./bash/run-neuman-demo.sh` to learn an avatar
 
 <p float="left">
@@ -54,9 +54,13 @@ We would like to acknowledge the following third-party repositories we used in t
 - [[Openpose]](https://github.com/CMU-Perceptual-Computing-Lab/openpose)
 - [[ROMP]](https://github.com/Arthur151/ROMP)
 - [[Segment-anything]](https://github.com/facebookresearch/segment-anything)
-- [[Fast-SNARF]](https://github.com/xuchen-ethz/fast-snarf)
 
 We are grateful to the developers and contributors of these repositories for their hard work and dedication to the open-source community. Without their contributions, our project would not have been possible.
+
+## Related Works
+Please also check out our related projects!
+- [[Fast-SNARF]](https://github.com/xuchen-ethz/fast-snarf)
+- [[Vid2Avatar]](https://github.com/MoyGcc/vid2avatar)
 
 ## Citation
 ```
