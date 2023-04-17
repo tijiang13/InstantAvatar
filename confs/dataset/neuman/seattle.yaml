@@ -1,0 +1,31 @@
+_target_: instant_avatar.datasets.custom.CustomDataModule
+name: neuman
+subject: seattle
+gender: neutral
+opt:
+  dataroot: ./data/custom/${dataset.subject}/
+  subject: ${dataset.subject}
+  train:
+    num_workers: 8
+    batch_size: 1
+    start: 0
+    end: 41
+    skip: 1
+    downscale: 1
+    sampler: ${sampler}
+    fitting: ${model.opt.optimize_SMPL.enable}
+    refine: ${model.opt.optimize_SMPL.is_refine}
+  val:
+    num_workers: 4
+    batch_size: 0
+    start: 40
+    end: 41
+    skip: 4
+    downscale: 1
+  test:
+    num_workers: 4
+    batch_size: 1
+    start: 40
+    end: 41
+    skip: 4
+    downscale: 1
