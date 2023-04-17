@@ -54,7 +54,7 @@ We would like to acknowledge the following third-party repositories we used in t
 - [[Openpose]](https://github.com/CMU-Perceptual-Computing-Lab/openpose)
 - [[ROMP]](https://github.com/Arthur151/ROMP)
 - [[Segment-anything]](https://github.com/facebookresearch/segment-anything)
-- [Fast-SNARF](https://github.com/xuchen-ethz/fast-snarf)
+- [[Fast-SNARF]](https://github.com/xuchen-ethz/fast-snarf)
 
 We are grateful to the developers and contributors of these repositories for their hard work and dedication to the open-source community. Without their contributions, our project would not have been possible.
 
