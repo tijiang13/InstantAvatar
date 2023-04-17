@@ -27,7 +27,8 @@ cd $OPENPOSE_PATH
   --write_images $IMAGE_FOLDER/../openpose_output/ \
   --write_images_format jpg \
   --render_pose 1 \
-  --render_threshold 0.5\
+  --render_threshold 0.5 \
+  --number_people_max 1 \
   --model_pose BODY_25
 cd $CURRENT_DIR
 
