@@ -20,7 +20,7 @@ model:
       enable: false 
       is_refine: false
     loss:
-      _target_: instant_avatar.utils.loss.NGPLoss
+      _target_: instant_avatar.utils.loss.NeRFLoss
       opt:
         w_rgb: 1.0
         w_alpha: 0.1

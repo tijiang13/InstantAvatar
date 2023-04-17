@@ -1,4 +1,5 @@
 from .structures.body_model_param import SMPLParamEmbedding
+from ..deformers.smpl_deformer import SMPLDeformer
 from .structures.utils import Rays
 from .networks.ngp import NeRFNGPNet
 from ..utils.loss import Evaluator
@@ -84,6 +85,9 @@ class DNeRFModel(pl.LightningModule):
                 assert batch[k].shape == body_params[k].shape
                 batch[k] = body_params[k]
 
+            if isinstance(self.deformer, SMPLDeformer):
+                batch["betas"] = body_params["betas"]
+
             # update near & far with refined SMPL
             dist = torch.norm(batch["transl"], dim=-1, keepdim=True).detach()
             batch["near"][:] = dist - 1
@@ -105,6 +109,18 @@ class DNeRFModel(pl.LightningModule):
         counter = d["counter_coarse"].reshape(-1, *img_size)
         return rgb, depth, alpha, counter
 
+    def update_density_grid(self):
+        if self.global_step % 16 == 0 and hasattr(self.renderer, "density_grid_train"):
+            _, density, valid = self.renderer.density_grid_train.update(self.deformer,
+                                                                        self.net_coarse,
+                                                                        self.global_step)
+            reg = 20 * density[~valid].mean()
+            if self.global_step < 500:
+                reg += 0.5 * density.mean()
+            return reg
+        else:
+            return None
+
     def training_step(self, batch, *args, **kwargs):
         if hasattr(self, "SMPL_param"):
             body_params = self.SMPL_param(batch["idx"])
@@ -114,28 +130,24 @@ class DNeRFModel(pl.LightningModule):
                 gt = torch.from_numpy(gt).cuda()
                 self.log(f"train/{k}", F.l1_loss(getattr(self.SMPL_param, k).weight, gt))
 
+            # update betas if use SMPLDeformer
+            if isinstance(self.deformer, SMPLDeformer):
+                batch["betas"] = body_params["betas"]
+
             # update near & far with refined SMPL
             dist = torch.norm(batch["transl"], dim=-1, keepdim=True).detach()
             batch["near"][:] = dist - 1
             batch["far"][:] = dist + 1
-        is_refine = self.opt.optimize_SMPL.get("is_refine", False)
 
         self.deformer.prepare_deformer(batch)
-        reg = None
-        if self.global_step % 16 == 0 and hasattr(self.renderer, "density_grid_train"):
-            _, density, valid = self.renderer.density_grid_train.update(self.deformer,
-                                                                        self.net_coarse,
-                                                                        self.global_step)
-            reg = 20 * density[~valid].mean()
-            if self.global_step < 500:
-                reg += 0.5 * density.mean()
-
+        reg = self.update_density_grid()
         if isinstance(self.net_coarse, NeRFNGPNet):
             self.net_coarse.initialize(self.deformer.bbox)
 
         predicts = self.forward(batch, eval_mode=False)
         losses = self.loss_fn(predicts, batch)
-        if reg != None and not is_refine:
+
+        if not (reg is None or self.opt.optimize_SMPL.get("is_refine", False)):
             losses["reg"] = reg
             losses["loss"] += reg
 

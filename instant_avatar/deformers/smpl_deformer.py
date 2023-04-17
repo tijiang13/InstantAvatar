@@ -18,7 +18,7 @@ def get_bbox_from_smpl(vs, factor=1.2):
     return torch.cat([min_vert, max_vert], dim=0)
 
 class SMPLDeformer():
-    def __init__(self, model_path, gender, threshold=0.2, k=1) -> None:
+    def __init__(self, model_path, gender, threshold=0.05, k=1) -> None:
         model_path = hydra.utils.to_absolute_path(model_path)
         self.body_model = SMPL(model_path, gender=gender)
 
@@ -116,6 +116,9 @@ class SMPLDeformer():
         if valid.any():
             with torch.cuda.amp.autocast():
                 rgb_cano[valid], sigma_cano[valid] = model(pts_cano[valid], None)
+            valid = torch.isfinite(rgb_cano).all(-1) & torch.isfinite(sigma_cano)
+            rgb_cano[~valid] = 0
+            sigma_cano[~valid] = -1e5
         return rgb_cano, sigma_cano
 
     def deform_test(self, pts, model):

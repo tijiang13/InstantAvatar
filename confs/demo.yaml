@@ -25,6 +25,8 @@ model:
         w_rgb: 1.0
         w_alpha: 0.1
         w_reg: 0.1
+        w_lpips: 0.01
+        w_depth_reg: 0.01
     optimizer:
       lr: 1e-2
       betas: [0.9, 0.99]

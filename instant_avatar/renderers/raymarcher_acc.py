@@ -97,15 +97,12 @@ class Raymarcher:
             N_alive = len(alive)
             if N_alive == 0: break
 
-            torch.cuda.nvtx.range_push("Sampling")
             N_step = max(min(self.MAX_BATCH_SIZE // N_alive, self.MAX_SAMPLES), 1)
             pts, d_new, z_new = raymarch_kernel.raymarch_test(rays_o, rays_d, near, far, alive,
                                                               density_grid.density_field, scale, offset,
                                                               step_size, N_step)
             counter[alive] += (d_new > 0).sum(dim=-1)
             mask = d_new > 0
-            torch.cuda.synchronize()
-            torch.cuda.nvtx.range_pop()
 
             rgb_vals = torch.zeros_like(pts, dtype=torch.float32)
             sigma_vals = torch.zeros_like(rgb_vals[..., 0], dtype=torch.float32)
@@ -113,11 +110,14 @@ class Raymarcher:
                 rgb_vals[mask], sigma_vals[mask] = model(pts[mask], None)
 
             raymarch_kernel.composite_test(rgb_vals, sigma_vals, d_new, z_new, alive,
-                                           color, depth, no_hit, 0.00)
+                                           color, depth, no_hit, 0.01)
             alive = alive[(no_hit[alive] > 1e-4) & (z_new[:, -1] > 0)]
             k += N_step
-
-        color = color + no_hit[..., None]
+        if bg_color is not None:
+            bg_color = bg_color.reshape(-1, 3)
+            color = color + no_hit[..., None] * bg_color
+        else:
+            color = color + no_hit[..., None]
         return {
             "rgb_coarse": color.reshape(rays.o.shape),
             "depth_coarse": depth.reshape(rays.near.shape),

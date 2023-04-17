@@ -46,7 +46,7 @@ def main(opt):
         trainer.fit(model, ckpt_path=checkpoints[-1])
     else:
         print("Saving configs.")
-        OmegaConf.save(opt, "config.yaml")
+        OmegaConf.save(opt, "config_fit.yaml")
         trainer.fit(model)
 
     # export fit parameters
@@ -60,11 +60,19 @@ def main(opt):
     root.mkdir(exist_ok=True)
 
     param_path = root / "train.npz"
-    if not os.path.exists(param_path):
-        print(f"Save optimized to {param_path}")
+    if True or not os.path.exists(param_path):
+        print(f"Save optimized pose to {param_path}")
         np.savez(str(param_path), **optimized_params)
     else:
-        print(f"Found optimized params in {param_path}, skip.")
+        while True:
+            choice = input(f"Found optimized params in {param_path}. Overwrite? (y/n)")
+            if choice.lower() == "y":
+                np.savez(str(param_path), **optimized_params)
+                break
+            elif choice.lower() == "n":
+                break
+            else:
+                print("Invalid input. Please enter 'y' or 'n'.")
 
 if __name__ == "__main__":
     main()

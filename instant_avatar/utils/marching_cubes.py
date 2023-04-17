@@ -28,9 +28,9 @@ def marching_cubes(func,
 
     verts, faces, _, _ = measure.marching_cubes(
         val.transpose(1, 0, 2), level_set, gradient_direction=gradient_direction)
-    
+
     bbox = bbox.cpu().numpy()
-    verts = verts * (bbox[1] - bbox[0]) + bbox[0]
+    verts = verts / resolution * (bbox[1] - bbox[0]) + bbox[0]
 
     mesh = trimesh.Trimesh(verts, faces)
     if extract_max_component:

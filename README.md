@@ -7,44 +7,33 @@
 # Step 2: Preprocess using our script
 python scripts/peoplesnapshot/preprocess_PeopleSnapshot.py --root <PATH_TO_PEOPLESNAPSHOT> --subject male-3-casual
 
-# Step 3: Download SMPL from: https://smpl.is.tue.mpg.de/
+# Step 3: Download SMPL from: https://smpl.is.tue.mpg.de/ and place the model in ./data/SMPLX/smpl/
+# └── SMPLX/smpl/
+#         ├── SMPL_FEMALE.pkl
+#         ├── SMPL_MALE.pkl
+#         └── SMPL_NEUTRAL.pkl
 ```
 
-If everything setups properly, the layout of `data/` folder should be:
-```
-./data/
-├── animation
-│   └── aist_demo.npz
-├── PeopleSnapshot
-│   ├── female-1-casual
-│   ├── female-3-casual
-│   ├── male-2-casual
-│   └── male-3-casual
-└── SMPLX
-    └── smpl
-        ├── SMPL_FEMALE.pkl
-        ├── SMPL_MALE.pkl
-        └── SMPL_NEUTRAL.pkl
-```
+## Quick Start
+Quickly learn and animate an avatar with `bash ./bash/run-demo.sh`
 
-## Demo 
-Quickly learn and animate an avatar with optimized poses. 
+<img src="./media/peoplesnapshot/male-3-casual.gif" width="270" height="270">
+<img src="./media/peoplesnapshot/female-4-casual.gif" width="270" height="270">
 
-```bash
-bash ./bash/run-demo.sh
-```
+## Play with Your Own Video
+Here we use the in the wild video provided by [Neuman](https://github.com/apple/ml-neuman) as an example:
 
-## Evaluation
-Evaluate the results on 4 sequences of peoplesnapshot with optimized poses (`male-3-casual`, `male-4-casual`, `female-3-casual`, `female-4-casual`)
+1. create a yaml file specifying the details about the sequence in `./confs/dataset/`. In this example it's provided in `./confs/dataset/neuman/seattle.yaml`.
+2. download the data from [Neuman's Repo](https://github.com/apple/ml-neuman), and run `cp <path-to-neuman-dataset>/seattle/images ./data/custom/seattle/`
+3. run the bash script `bash ./bash/run-neuman-demo.sh`
 
-```bash
-bash ./bash/run-peoplesnapshot.sh
-```
+<img src="./media/neuman/lab.gif" width="270" height="270">
+<img src="./media/neuman/seattle.gif" width="270" height="270">
 
-We also support fitting SMPL poses on the fly, when the provided SMPL registration is not perfect (however it will converge slower, ~10 mins on a 3090 card)
-```bash
-bash ./bash/run-fitting.sh
-```
+And you can animate the avatar easily:
+
+<img src="./media/neuman/seattle-dance.gif" width="270" height="270">
+
 
 ## Citation
 ```

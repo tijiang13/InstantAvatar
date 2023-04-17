@@ -68,7 +68,7 @@ class ForwardDeformer(torch.nn.Module):
             mask = others['valid_ids']
             weights = self.query_weights(xc_opt, cond, mask=mask)
             T = einsum("pn,nij->pij", weights[mask], tfs[0])
-            pts = xd[..., None, :].expand(1, -1, 13, 3)[mask]
+            pts = xd[..., None, :].expand(1, -1, len(self.init_bones), 3)[mask]
             xc = torch.zeros_like(xc_opt)
             xc[mask] = ((pts - T[:, :3, 3]).unsqueeze(-2) @ T[:, :3, :3]).squeeze(1)
             return xc, others

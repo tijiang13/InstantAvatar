@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.autograd import Function
 from torch.cuda.amp import custom_bwd, custom_fwd
 import tinycudann as tcnn
 
+EPS = 1e-3
 
 class TruncExp(Function):
     @staticmethod
@@ -55,7 +55,7 @@ class NeRFNGPNet(nn.Module):
                 "n_hidden_layers": 2,
             },
         )
-        self.sigma_activ = lambda x: torch.relu(x).float()
+        # self.sigma_activ = lambda x: torch.relu(x).float()
         # self.sigma_activ = TruncExp.apply
         self.register_buffer("center", torch.FloatTensor(opt.center))
         self.register_buffer("scale", torch.FloatTensor(opt.scale))
@@ -73,7 +73,7 @@ class NeRFNGPNet(nn.Module):
     def forward(self, x, d, cond=None):
         # normalize pts and view_dir to [0, 1]
         x = (x - self.center) / self.scale + 0.5
-        # assert x.min() >= 0 and x.max() <= 1
+        assert x.min() >= -EPS and x.max() < 1 + EPS
         x = x.clamp(min=0, max=1)
         x = self.encoder(x)
         # x = self.density_net(x)

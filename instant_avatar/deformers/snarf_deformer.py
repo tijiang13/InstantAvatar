@@ -5,10 +5,10 @@ import hydra
 
 def get_predefined_rest_pose(cano_pose, device="cuda"):
     body_pose_t = torch.zeros((1, 69), device=device)
-    if cano_pose == "da_pose":
+    if cano_pose.lower() == "da_pose":
         body_pose_t[:, 2] = torch.pi / 6
         body_pose_t[:, 5] = -torch.pi / 6
-    elif cano_pose == "A_pose":
+    elif cano_pose.lower() == "a_pose":
         body_pose_t[:, 2] = 0.2
         body_pose_t[:, 5] = -0.2
         body_pose_t[:, 47] = -0.8
@@ -59,7 +59,6 @@ class SNARFDeformer():
                                          smpl_weights=self.body_model.lbs_weights.clone()[None].detach(),
                                          use_smpl=True)
         self.bbox = get_bbox_from_smpl(smpl_outputs.vertices.detach())
-        # self.bbox = self.deformer.bbox
 
         self.dtype = torch.float32
         self.deformer.lbs_voxel_final = self.deformer.lbs_voxel_final.type(self.dtype)
@@ -119,8 +118,9 @@ class SNARFDeformer():
 
         # from pytorch3d import ops
         # with torch.no_grad():
-        #     dist_sq, idx, neighbors = ops.knn_points(pts.float(), self.vertices.float(), K=1)
-        # valid = (dist_sq < 0.1 ** 2).reshape(-1, 1) & valid
+        #     dist_sq, idx, neighbors = ops.knn_points(pts_cano.reshape(1, -1, 3), self.vs_template, K=1)
+        #     dist_sq = dist_sq.reshape(valid.shape)
+        # valid = (dist_sq < 0.05 ** 2) & valid
         return pts_cano.reshape(point_size, -1, 3), valid
 
     @torch.no_grad()
