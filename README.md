@@ -1,6 +1,13 @@
 # InstantAvatar
 [[Project Page]](https://tijiang13.github.io/InstantAvatar/)
 
+## Install the dependencies
+```
+python -m venv env
+source activate env/bin/activate
+bash install.sh
+```
+
 ## Prepare Data
 ```bash
 # Step 1: Download data from: https://graphics.tu-bs.de/people-snapshot
