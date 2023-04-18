@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <meta name="description" content="">
+  <meta name="keywords" content="NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>InstantAvatar: Learning Avatars from Monocular Video in 60 Seconds</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">InstantAvatar: Learning Avatars from Monocular Video in 60 Seconds</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"> <a href="#">Tianjian Jiang*</a><sup>1</sup>,</span>
+            <span class="author-block"> <a href="https://ait.ethz.ch/people/xu/">Xu Chen*</a><sup>1,2</sup>,</span>
+            <span class="author-block"> <a href="https://ait.ethz.ch/people/song/">Jie Song</a><sup>1</sup>,</span>
+            <span class="author-block"> <a href="https://ait.ethz.ch/people/hilliges/">Otmar Hilliges</a><sup>1</sup></span>
+          </div>
+
+          <div class="is-size-5">
+              *Equal Contribution
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>ETH Zürich,</span>
+            <span class="author-block"><sup>2</sup>Max Planck Institute for Intelligent Systems, Tübingen</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2212.10550.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=413yuZEPjuc"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/tijiang13/InstantAvatar"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+        <img src="./static/images/teaser.jpg"  class="center"/>
+      <h2 class="subtitle has-text-centered">
+          InstantAvatar reconstructs animatable high-fidelity human avatars from monocular video within 60 seconds, providing poses and masks, and can animate and render the model at interactive rate.
+      </h2>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>In this paper, we take a significant step towards real-world applicability of monocular neural avatar reconstruction by contributing InstantAvatar, a system that can reconstruct human avatars from a monocular video within seconds, and these avatars can be animated and rendered at an interactive rate. To achieve this efficiency we propose a carefully designed and engineered system, that leverages emerging acceleration structures for neural fields, in combination with an efficient empty space-skipping strategy for dynamic scenes. We also contribute an efficient implementation that we will make available for research purposes. 
+
+Compared to existing methods, InstantAvatar converges 130x faster and can be trained in minutes instead of hours. It achieves comparable or even better reconstruction quality and novel pose synthesis results. When given the same time budget, our method significantly outperforms SoTA methods. InstantAvatar can yield acceptable visual quality in as little as 10 seconds training time. 
+</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- Paper video. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/413yuZEPjuc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="method">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Method</h2>
+    <img src="./static/images/method.jpg"  height="250" class="center"/>
+    <p>For each frame, we sample points along the rays in posed space. We then transform these points into a normalized space where we remove the global orientation and translation of the person. In this normalized space, we filter points in empty space using our occupancy grid. The remaining points are deformed to canonical space using an articulation module and then fed into the canonical neural radiance field to evaluate the color and density.</p>
+  </div>
+</section>
+
+
+<section class="section" id="result">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Result</h2>
+    <h3 class="title">Training progression</h2>
+    <img src="./static/gifs/progression.gif" style="margin: auto; display: block;"/>
+    <h3 class="title">Novel View</h2>
+    <div class="columns is-max-desktop content">
+        <img class="preload" src="./static/gifs/rotation-m3c.gif" width="240" height="240"/>
+        <img class="preload" src="./static/gifs/rotation-f3c.gif" width="240" height="240"/>
+        <img class="preload" src="./static/gifs/rotation-m4c.gif" width="240" height="240"/>
+        <img class="preload" src="./static/gifs/rotation-f4c.gif" width="240" height="240"/>
+    </div>
+    <h3 class="title">Novel Animation</h2>
+    <div class="columns is-max-desktop content">
+        <img class="preload" src="./static/gifs/anim-m3c.gif" width="240" height="240"/>
+        <img class="preload" src="./static/gifs/anim-m3s.gif" width="240" height="240"/>
+        <img class="preload" src="./static/gifs/anim-m2c.gif" width="240" height="240"/>
+        <img class="preload" src="./static/gifs/anim-f4c.gif" width="240" height="240"/>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{jiang2022instantavatar,
+  author    = {Jiang, Tianjian and Chen, Xu and Song, Jie and Hilliges, Otmar},
+  title     = {InstantAvatar: Learning Avatars from Monocular Video in 60 Seconds},
+  journal   = {arXiv},
+  year      = {2022},
+}</code></pre>
+  </div>
+</section>
+
+</body>
+</html>
