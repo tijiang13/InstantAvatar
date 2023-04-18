@@ -9,3 +9,4 @@ pip install scipy==1.10.1
 pip install smplx==0.1.28
 pip install torchmetrics==0.11.4
 pip install lpips==0.1.4
+pip install hydra-core==1.1.2
