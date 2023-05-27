@@ -99,7 +99,6 @@ class CustomDataset(torch.utils.data.Dataset):
         msk = cv2.imread(self.msk_lists[idx], cv2.IMREAD_GRAYSCALE) / 255
         if self.downscale > 1:
             img = cv2.resize(img, dsize=None, fx=1/self.downscale, fy=1/self.downscale)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             msk = cv2.resize(msk, dsize=None, fx=1/self.downscale, fy=1/self.downscale)
 
         img = (img[..., :3] / 255).astype(np.float32)

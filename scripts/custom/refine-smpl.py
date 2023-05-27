@@ -185,7 +185,6 @@ def main(root, gender, keypoints_threshold, use_silhouette, downscale=1):
     body_model.to(DEVICE)
 
     # optimize with keypoints
-    # optimizer = torch.optim.LBFGS(params.values(), line_search_fn="strong_wolfe")
     optimizer = torch.optim.Adam(params.values(), lr=1e-3)
     def closure():
         optimizer.zero_grad()
@@ -201,12 +200,12 @@ def main(root, gender, keypoints_threshold, use_silhouette, downscale=1):
         loss = error[:, SELECT_JOINTS]
         loss = loss.mean()
 
-        # reg = (keypoints_pred[1:] - keypoints_pred[:-1]).square().sum(-1).sqrt()
-        # loss += reg.mean()
+        reg = (smpl_output.vertices[1:] - smpl_output.vertices[:-1]).square().sum(-1).sqrt()
+        loss += reg.mean()
 
         loss.backward()
         return loss
-    optimize(optimizer, closure, max_iter=500)
+    optimize(optimizer, closure, max_iter=200)
 
     if use_silhouette:
         masks = sorted(glob.glob(f"{root}/masks/*"))
@@ -260,6 +259,9 @@ def main(root, gender, keypoints_threshold, use_silhouette, downscale=1):
         elif k == "thetas":
             smpl_params[k][:, :3] = params["global_orient"].detach().cpu().numpy()
             smpl_params[k][:, 3:] = params["body_pose"].detach().cpu().numpy()
+        elif k == "body_pose":
+            smpl_params[k] = params[k].detach().cpu().numpy()
+            smpl_params[k][:, -12:] = 0
         else:
             smpl_params[k] = params[k].detach().cpu().numpy()
     np.savez(f"{root}/poses_optimized.npz", **smpl_params)

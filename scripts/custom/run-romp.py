@@ -18,6 +18,8 @@ if __name__ == "__main__":
     for p in tqdm(sorted(glob.glob(f"{args.data_dir}/images/*"))):
         img = cv2.imread(p)
         result = romp_model(img)
+        if result["body_pose"].shape[0] > 1:
+            result = {k: v[0:1] for k, v in result.items()}
         results.append(result)
 
     results = {
