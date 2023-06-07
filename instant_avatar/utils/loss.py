@@ -25,8 +25,8 @@ class NGPLoss(nn.Module):
         losses["loss_alpha_coarse"] = loss_alpha
 
         if self.opt.get("w_lpips", 0) > 0 and len(predicts["rgb_coarse"].shape) == 5:
-            loss_lpips = self.lpips(predicts["rgb_coarse"].flatten(0, 1).permute(0, 3, 1, 2).clip(max=1),
-                                    targets["rgb"].flatten(0, 1).permute(0, 3, 1, 2)).sum()
+            loss_lpips = self.lpips(predicts["rgb_coarse"][..., [2, 1, 0]].flatten(0, 1).permute(0, 3, 1, 2).clip(max=1),
+                                    targets["rgb"][..., [2, 1, 0]].flatten(0, 1).permute(0, 3, 1, 2)).sum()
             losses["loss_lpips"] = loss_lpips
             loss += loss_lpips * self.opt.w_lpips
         

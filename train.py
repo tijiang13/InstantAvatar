@@ -46,7 +46,6 @@ def main(opt):
         print("Saving configs.")
         OmegaConf.save(opt, "config.yaml")
         trainer.fit(model)
-    result = trainer.test(model, verbose=False)[0]
 
 
 if __name__ == "__main__":
