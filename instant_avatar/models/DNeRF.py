@@ -2,9 +2,7 @@ from .structures.body_model_param import SMPLParamEmbedding
 from ..deformers.smpl_deformer import SMPLDeformer
 from .structures.utils import Rays
 from .networks.ngp import NeRFNGPNet
-from ..utils.loss import Evaluator
 import torch
-from torch_ema import ExponentialMovingAverage
 import numpy as np
 import pytorch_lightning as pl
 import hydra
@@ -27,7 +25,6 @@ class DNeRFModel(pl.LightningModule):
         self.deformer = hydra.utils.instantiate(opt.deformer)
         self.loss_fn = hydra.utils.instantiate(opt.loss)
         self.renderer = hydra.utils.instantiate(opt.renderer)
-        self.evaluator = Evaluator()
         self.datamodule = datamodule
         self.opt = opt
 
@@ -35,8 +32,7 @@ class DNeRFModel(pl.LightningModule):
         # use one optimizer with different learning rate for params
         params, body_model_params, encoding_params = [], [], []
         for (name, param) in self.named_parameters():
-            # skip lpips
-            if name.startswith("evaluator"):
+            if name.startswith("loss_fn"):
                 continue
 
             if name.startswith("SMPL_param"):
@@ -59,11 +55,6 @@ class DNeRFModel(pl.LightningModule):
 
         # additional configure for gradscaler
         self.scaler = torch.cuda.amp.GradScaler(init_scale=1024.0)
-
-        # additional configure for ema
-        if hasattr(self.opt, "ema") and hasattr(self.opt.ema, "decay"):
-            ema = ExponentialMovingAverage(encoding_params + params, decay=self.opt.ema.decay)
-            self.ema = ema
         return [optimizer], [scheduler]
 
     def forward(self, batch, eval_mode=False):
@@ -97,12 +88,7 @@ class DNeRFModel(pl.LightningModule):
         if hasattr(self.renderer, "density_grid_test"):
             self.renderer.density_grid_test.initialize(self.deformer, self.net_coarse)
 
-        if hasattr(self, "ema"):
-            with self.ema.average_parameters():
-                d = self.forward(batch, eval_mode=True)
-        else:
-            d = self.forward(batch, eval_mode=True)
-
+        d = self.forward(batch, eval_mode=True)
         rgb = d["rgb_coarse"].reshape(-1, *img_size, 3)
         depth = d["depth_coarse"].reshape(-1, *img_size)
         alpha = d["alpha_coarse"].reshape(-1, *img_size)
@@ -151,9 +137,6 @@ class DNeRFModel(pl.LightningModule):
             losses["reg"] = reg
             losses["loss"] += reg
 
-        # add some extra loss here
-        losses["psnr"] = self.evaluator.psnr(predicts["rgb_coarse"], batch["rgb"])
-
         for k, v in losses.items():
             self.log(f"train/{k}", v)
         if self.precision == 16:
@@ -174,10 +157,6 @@ class DNeRFModel(pl.LightningModule):
             except Exception as e:
                 logger.warning(e)
 
-    def on_train_batch_end(self, outputs, batch, batch_idx):
-        if hasattr(self, "ema"):
-            self.ema.update()
-
     def on_validation_epoch_end(self, *args, **kwargs):
         # self.deformer.initialized = False
         scheduler = self.lr_schedulers()
@@ -195,9 +174,6 @@ class DNeRFModel(pl.LightningModule):
         alpha_gt = batch["alpha"].reshape(-1, *img_size)
 
         losses = {
-            # add some extra loss here
-            **self.evaluator(rgb, rgb_gt),
-
             # add regular losses
             "rgb_loss": (rgb - rgb_gt).square().mean(),
             "counter_avg": counter.mean(),
@@ -248,25 +224,16 @@ class DNeRFModel(pl.LightningModule):
         img_size = self.datamodule.testset.image_shape
         rgb, *_ = self.render_image_fast(batch, img_size)
         rgb_gt = batch["rgb"].reshape(-1, *img_size, 3)
-        losses = {
-            # add some extra loss here 
-            **self.evaluator(rgb, rgb_gt),
-            "rgb_loss": (rgb - rgb_gt).square().mean(),
-        }
-
         errmap = (rgb - rgb_gt).square().sum(-1).sqrt().cpu().numpy()[0] / np.sqrt(3)
         errmap = cv2.applyColorMap((errmap * 255).astype(np.uint8), cv2.COLORMAP_JET)
         errmap = torch.from_numpy(errmap).to(rgb.device)[None] / 255
 
         if batch_idx == 0:
-            os.makedirs("outputs/", exist_ok=True)
+            os.makedirs("test/", exist_ok=True)
 
+        # save for later evaluation
         img = torch.cat([rgb_gt, rgb, errmap], dim=2)
-        cv2.imwrite(f"outputs/{batch_idx}.png", img.cpu().numpy()[0] * 255)
-
-        for k, v in losses.items():
-            self.log(f"test/{k}", v, on_epoch=True)
-        return {}
+        cv2.imwrite(f"test/{batch_idx}.png", img.cpu().numpy()[0] * 255)
 
 
     ######################

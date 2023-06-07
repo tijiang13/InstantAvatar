@@ -1,3 +1,4 @@
+from third_parties.pytorch3d import ops
 import torch
 from torch import einsum
 import torch.nn.functional as F
@@ -223,8 +224,7 @@ def bmv(m, v):
 
 def query_weights_smpl(x, smpl_verts, smpl_weights, resolution=128):
     # adapted from https://github.com/jby1993/SelfReconCode/blob/main/model/Deformer.py
-    import pytorch3d.ops as ops
-    dist, idx, _ = ops.knn_points(x, smpl_verts.detach(), K=30, return_nn=True)
+    dist, idx, _ = ops.knn_points(x, smpl_verts.detach(), K=30)
     dist = dist.sqrt().clamp_(0.0001, 1.)
     weights = smpl_weights[0, idx]
 

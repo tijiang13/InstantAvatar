@@ -57,12 +57,19 @@ And you can animate the avatar easily:
 ## Acknowledge
 We would like to acknowledge the following third-party repositories we used in this project:
 - [[Tinycuda-nn]](https://github.com/NVlabs/tiny-cuda-nn)
-- [[SMPLX]](https://github.com/vchoutas/smplx)
 - [[Openpose]](https://github.com/CMU-Perceptual-Computing-Lab/openpose)
 - [[ROMP]](https://github.com/Arthur151/ROMP)
 - [[Segment-anything]](https://github.com/facebookresearch/segment-anything)
 
+Besides, we used code from:
+- [[Anim-NeRf]](https://github.com/JanaldoChen/Anim-NeRF)
+- [[SelfRecon]](https://github.com/jby1993/SelfReconCode)
+- [[lpips]](https://github.com/richzhang/PerceptualSimilarity)
+- [[SMPLX]](https://github.com/vchoutas/smplx)
+- [[pytorch3d]](https://github.com/facebookresearch/pytorch3d)
+
 We are grateful to the developers and contributors of these repositories for their hard work and dedication to the open-source community. Without their contributions, our project would not have been possible.
+
 
 ## Related Works
 Please also check out our related projects!
