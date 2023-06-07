@@ -46,13 +46,15 @@ def ray_aabb(o, d, bbox_min, bbox_max):
     far = t_max.min(dim=-1).values
     return near, far
 
-class Raymarcher:
+class Raymarcher(torch.nn.Module):
     def __init__(self, MAX_SAMPLES: int, MAX_BATCH_SIZE: int) -> None:
         """
         Args:
             MAX_SAMPLES: number of samples per ray
             MAX_BATCH_SIZE: max samples to evaluate per batch 
         """
+        super().__init__()
+
         self.MAX_SAMPLES = MAX_SAMPLES
         self.MAX_BATCH_SIZE = MAX_BATCH_SIZE
 

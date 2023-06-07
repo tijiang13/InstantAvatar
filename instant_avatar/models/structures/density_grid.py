@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
-class DensityGrid():
+class DensityGrid(torch.nn.Module):
     """Multi-resolution grid"""
     def __init__(self, grid_size=64, aabb=None) -> None:
         super().__init__()
@@ -15,9 +15,9 @@ class DensityGrid():
         self.coords = coords.cuda()
         self.grid_size = grid_size
 
-        self.density_cached = torch.zeros_like(self.coords[:, 0])
-        self.density_field = self.density_cached > 0.01
-        self.density_field = self.density_field.reshape(grid_size, grid_size, grid_size)
+        # density_cached = torch.zeros_like(self.coords[:, 0])
+        self.register_buffer("density_cached", torch.zeros_like(self.coords[:, 0]))
+        self.register_buffer("density_field", torch.zeros(grid_size, grid_size, grid_size, dtype=torch.bool))
         self.aabb = aabb
 
     @property
