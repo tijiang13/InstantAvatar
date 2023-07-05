@@ -9,6 +9,8 @@ import torch.nn as nn
 from torch.cuda.amp import custom_fwd
 from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
+from pytorch_lightning.loggers import TensorBoardLogger
+
 
 
 class Evaluator(nn.Module):
@@ -46,6 +48,8 @@ def main(opt):
         **opt.checkpoint
     )
     lr_monitor = pl.callbacks.LearningRateMonitor()
+    pl_logger = TensorBoardLogger("tensorboard", name="refine", version=0)
+
 
     # refine test data
     opt.dataset.opt.train.start = opt.dataset.opt.test.start
@@ -78,7 +82,7 @@ def main(opt):
                          callbacks=[checkpoint_callback, lr_monitor],
                          num_sanity_val_steps=0,  # disable sanity check
                          weights_summary=None,
-                         logger=False,
+                         logger=pl_logger,
                          enable_progress_bar=False,
                          **opt.train)
 
