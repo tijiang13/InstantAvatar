@@ -19,6 +19,7 @@ model:
     optimize_SMPL:
       enable: false 
       is_refine: false
+      lr: 1e-4
     loss:
       _target_: instant_avatar.utils.loss.NGPLoss
       opt:
@@ -28,11 +29,12 @@ model:
         w_lpips: 0.01
         w_depth_reg: 0.01
     optimizer:
-      lr: 1e-2
+      lr: 1e-3
       betas: [0.9, 0.99]
       eps: 1e-15
     scheduler:
       max_epochs: ${train.max_epochs}
+    smpl_init: True
 
 project: "SNARF_NGP"
 experiment: "baseline"

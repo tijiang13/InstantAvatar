@@ -45,7 +45,6 @@ def main(opt):
         auto_insert_metric_name=False,
         **opt.checkpoint
     )
-    lr_monitor = pl.callbacks.LearningRateMonitor()
 
     # refine test data
     opt.dataset.opt.train.start = opt.dataset.opt.test.start
@@ -75,7 +74,7 @@ def main(opt):
 
     trainer = pl.Trainer(gpus=1,
                          accelerator="gpu",
-                         callbacks=[checkpoint_callback, lr_monitor],
+                         callbacks=[checkpoint_callback],
                          num_sanity_val_steps=0,  # disable sanity check
                          weights_summary=None,
                          logger=False,

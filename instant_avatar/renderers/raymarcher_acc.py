@@ -47,7 +47,7 @@ def ray_aabb(o, d, bbox_min, bbox_max):
     return near, far
 
 class Raymarcher(torch.nn.Module):
-    def __init__(self, MAX_SAMPLES: int, MAX_BATCH_SIZE: int) -> None:
+    def __init__(self, MAX_SAMPLES: int, MAX_BATCH_SIZE: int, smpl_init : bool = False) -> None:
         """
         Args:
             MAX_SAMPLES: number of samples per ray
@@ -60,14 +60,24 @@ class Raymarcher(torch.nn.Module):
 
         self.aabb = torch.tensor([[-1.25, -1.55, -1.25],
                                   [ 1.25,  0.95,  1.25]]).float().cuda()
-        self.density_grid_train = DensityGrid(64, self.aabb)
         self.density_grid_test = DensityGrid(64)
+        self.smpl_init = smpl_init
+
+    def initialize(self, N):
+        if self.smpl_init:
+            self.density_grid_train_all = [DensityGrid(64, self.aabb, smpl_init=True).cuda() for _ in range(N)]
+        else:
+            self.density_grid_train_all = [DensityGrid(64, self.aabb).cuda()]
 
     def __call__(self, rays, model, eval_mode=True, noise=0, bg_color=None):
         if eval_mode:
             return self.render_test(rays, model, bg_color)
         else:
             return self.render_train(rays, model, noise, bg_color)
+
+    @property
+    def density_grid_train(self):
+        return self.density_grid_train_all[min(self.idx, len(self.density_grid_train_all) - 1)]
 
     @torch.no_grad()
     def render_test(self, rays, model, bg_color):

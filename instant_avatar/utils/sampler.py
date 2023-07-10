@@ -46,18 +46,24 @@ class EdgeSampler:
 
 
 class PatchSampler():
-    def __init__(self, num_patch=4, patch_size=20, ratio_mask=0.9):
+    def __init__(self, num_patch=4, patch_size=20, ratio_mask=0.9, dilate=0):
         self.n = num_patch
         self.patch_size = patch_size
         self.p = ratio_mask
+        self.dilate = dilate
         assert self.patch_size % 2 == 0, "patch size has to be even"
 
     def sample(self, mask, *args):
         patch = (self.patch_size, self.patch_size)
         shape = mask.shape[:2]
+
         if np.random.rand() < self.p:
             o = patch[0] // 2
-            valid = mask[o:-o, o:-o] > 0
+            if self.dilate > 0:
+                m = cv2.dilate(mask, np.ones((self.dilate, self.dilate))) > 0
+            else:
+                m = mask
+            valid = m[o:-o, o:-o] > 0
             (xs, ys) = np.where(valid)
             idx = np.random.choice(len(xs), size=self.n, replace=False)
             x, y = xs[idx], ys[idx]
