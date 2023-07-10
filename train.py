@@ -3,8 +3,6 @@ import os
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import TensorBoardLogger
-from pytorch_lightning.profiler import AdvancedProfiler
-import logging
 import hydra
 from omegaconf import OmegaConf
 
@@ -25,7 +23,6 @@ def main(opt):
     lr_monitor = pl.callbacks.LearningRateMonitor()
 
     pl_logger = TensorBoardLogger("tensorboard", name="default", version=0)
-    pl_profiler = AdvancedProfiler("profiler", "advance_profiler")
 
     datamodule = hydra.utils.instantiate(opt.dataset, _recursive_=False)
     model = hydra.utils.instantiate(opt.model, datamodule=datamodule, _recursive_=False)

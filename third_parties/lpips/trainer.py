@@ -8,8 +8,8 @@ from collections import OrderedDict
 from torch.autograd import Variable
 from scipy.ndimage import zoom
 from tqdm import tqdm
-import lpips
 import os
+from .lpips import LPIPS
 
 
 class Trainer():

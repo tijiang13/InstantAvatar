@@ -10,3 +10,4 @@ pip install imageio
 pip install smplx==0.1.28
 pip install hydra-core==1.1.2
 pip install h5py ninja chumpy numpy==1.23.1
+pip install lpips
