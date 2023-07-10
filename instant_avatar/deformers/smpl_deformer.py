@@ -92,7 +92,7 @@ class SMPLDeformer():
         # find nearest neighbors
         pts = pts.reshape(batch_size, -1, 3)
         with torch.no_grad():
-            dist_sq, idx = ops.knn_points(pts.float(), self.vertices.float(), K=self.k)
+            dist_sq, idx, _ = ops.knn_points(pts.float(), self.vertices.float(), K=self.k)
 
         # if valid => return the transformed points
         valid = dist_sq < self.threshold ** 2
