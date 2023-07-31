@@ -10,7 +10,7 @@ def marching_cubes(func,
                    resolution=256,
                    level_set=0,
                    gradient_direction="ascent",
-                   extract_max_component=False,
+                   extract_max_component=True,
                    device="cuda"):
 
     idx = torch.arange(0, resolution)
@@ -27,7 +27,7 @@ def marching_cubes(func,
     val = val.cpu().numpy()
 
     verts, faces, _, _ = measure.marching_cubes(
-        val.transpose(1, 0, 2), level_set, gradient_direction=gradient_direction)
+        val, level_set, gradient_direction=gradient_direction)
 
     bbox = bbox.cpu().numpy()
     verts = verts / resolution * (bbox[1] - bbox[0]) + bbox[0]
