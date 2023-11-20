@@ -11,6 +11,9 @@ import torch.nn
 
 from . import *
 
+def normalize_tensor(in_feat,eps=1e-10):
+    norm_factor = torch.sqrt(torch.sum(in_feat**2,dim=1,keepdim=True))
+    return in_feat/(norm_factor+eps)
 
 def spatial_average(in_tens, keepdim=True):
     return in_tens.mean([2,3],keepdim=keepdim)
