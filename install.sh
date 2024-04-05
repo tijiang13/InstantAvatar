@@ -11,3 +11,4 @@ pip install smplx==0.1.28
 pip install hydra-core==1.1.2
 pip install h5py ninja chumpy numpy==1.23.1
 pip install lpips
+pip install kaolin==0.15.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-1.13.1_cu116.html
