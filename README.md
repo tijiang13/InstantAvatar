@@ -1,5 +1,5 @@
 # InstantAvatar
-[[Project Page]](https://tijiang13.github.io/InstantAvatar/)
+## [Paper](https://arxiv.org/pdf/2212.10550.pdf) | [Video Youtube](https://www.youtube.com/watch?v=413yuZEPjuc) | [Project Page](https://tijiang13.github.io/InstantAvatar/)
 
 ## Install the dependencies
 ```
@@ -81,7 +81,8 @@ Please also check out our related projects!
 @article{jiang2022instantavatar,
   author    = {Jiang, Tianjian and Chen, Xu and Song, Jie and Hilliges, Otmar},
   title     = {InstantAvatar: Learning Avatars from Monocular Video in 60 Seconds},
-  journal   = {arXiv},
-  year      = {2022},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month     = {June},
+  year      = {2023},
 }
 ```
